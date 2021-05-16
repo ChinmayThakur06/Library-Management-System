@@ -3,12 +3,8 @@ from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image,ImageTk
 import Library_features
-from threading import Thread, current_thread
-import time
 import datetime
 import sqlite3
-import matplotlib.pyplot as plt
-import numpy as np
 image1='menu.png'
 image2='book.png'
 image3='user.png'
