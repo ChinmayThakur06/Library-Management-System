@@ -9,6 +9,7 @@ image1='menu.png'
 image2='book.png'
 image3='user.png'
 image4='login.png'
+mem_id=0
 
 class menu:
 
@@ -107,7 +108,7 @@ class menu:
         try:
             e=self.acopies.get()
         except:
-            messagebox.showinfo("Error","No of copies cannot be characters.")
+            messagebox.showinfo("Error","Number of copies cannot be characters.")
             goahed=False
         f=self.aloc.get()
         g=0
@@ -237,7 +238,7 @@ class menu:
         try:
             no=self.e5.get()
         except:
-            messagebox.showinfo("Error","Phone Number cannot be characters.")
+            messagebox.showinfo("Error","Number of copies cannot be characters.")
             goahed=False
         
         if goahed==True:
@@ -260,7 +261,7 @@ class menu:
         try:
             no1=self.e5.get()
         except:
-            messagebox.showinfo("Error","Phone Number cannot be characters.")
+            messagebox.showinfo("Error","Number of copies cannot be characters.")
             goahed=False
         
         if goahed==True:
@@ -324,15 +325,18 @@ class menu:
     def cnfissuedbook(self):
         bookid=self.aidd.get()
         Userid=self.aUsert.get()
+        conn=sqlite3.connect('Library.db')
         try:
             current_date=datetime.datetime.today()
-            due_date=datetime.datetime.today() + datetime.timedelta(7)
+            due_date=datetime.datetime.today() + datetime.timedelta(1)
             conn.execute("insert into book_issued \
-            values (?,?,?,?)",(bookid,Userid,current_date.strftime("%x"),due_date.strftime("%x"),));
+            values (?,?,?,?)",(bookid,Userid,current_date.strftime("%x"),due_date.strftime("%x"),))
             conn.commit()
             conn.execute("update book_info set COPIES=COPIES-1, TIMES_ISSUED=TIMES_ISSUED+1 where ID=?",(bookid,))
             conn.commit()
+            conn.close()
 
+            conn=sqlite3.connect('Library.db')
             c=conn.execute("select TITLE from book_info Where ID=?",(bookid,))
             g=c.fetchall()
             bname=[x[0] for x in g]
@@ -343,7 +347,7 @@ class menu:
             lname=[x[1] for x in g]
             to_id=[x[2] for x in g]
 
-            c=conn.execute("SELECT usermailid,password FROM `login` ")
+            c=conn.execute("SELECT usermailid,password FROM login where mem_id=?",(mem_id,))
             g=c.fetchall()
             from_id=[x[0] for x in g]
             password=[x[1] for x in g]
@@ -452,7 +456,7 @@ class menu:
         bookid=self.aidd.get()
         Userid=self.aUsert.get()
         conn=sqlite3.connect('Library.db')
-        conn.execute("DELETE FROM book_issued where BOOK_ID=? and USER_ID=?",(bookid,Userid,));
+        conn.execute("DELETE FROM book_issued where BOOK_ID=? and USER_ID=?",(bookid,Userid,))
         conn.commit()
         conn.execute("update book_info set COPIES=COPIES+1 where ID=?",(bookid,))
         conn.commit()
@@ -465,7 +469,7 @@ class menu:
         plc = self.f1
 
         conn=sqlite3.connect('Library.db')
-
+        cursor = conn.cursor()
         cursor.execute("select ID,COPIES from book_info where ID=?",(bookid,))
         an=cursor.fetchall()
         cursor.execute("select ID from user_info where ID=?",(Userid,))
@@ -805,7 +809,7 @@ def automail():
                 lname=[x[1] for x in g]
                 to_id=[x[2] for x in g]
 
-                c=conn.execute("SELECT usermailid,password FROM `login` ")
+                c=conn.execute("SELECT usermailid,password FROM login where mem_id=?",(mem_id,))
                 g=c.fetchall()
                 from_id=[x[0] for x in g]
                 password=[x[1] for x in g]
@@ -816,7 +820,7 @@ def automail():
     
 
     current_time=datetime.datetime.now()
-    if(current_time.strftime("%H:%M")=="17:30"):
+    if(current_time.strftime("%H:%M")=="20:00"):
         sendmail()
     root.after(60000,automail)
 #==============================METHODS========================================
@@ -832,14 +836,17 @@ def Database():
 
 def Login(event=None):
     Database()
-
+    global mem_id
 
     if USERNAME.get() == "" or PASSWORD.get() == "":
         messagebox.showinfo("Error","Please complete the required field!")
         lbl_text.config(text="Please complete the required field!", fg="red")
     else:
-        cursor.execute("SELECT * FROM `login` WHERE `usermailid` = ? AND `password` = ?", (USERNAME.get(), PASSWORD.get()))
-        if cursor.fetchone() is not None:
+        c=conn.execute("SELECT * FROM `login` WHERE `usermailid` = ? AND `password` = ?", (USERNAME.get(), PASSWORD.get()))
+        g=c.fetchall()
+        if g != []:
+            member_id=[x[0] for x in g]
+            mem_id=member_id[0]
             root.destroy()
             automail()
             a=menu()

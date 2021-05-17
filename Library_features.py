@@ -27,10 +27,10 @@ def issue_mail(Fname ,Lname, Bname, Duedate, from_id ,to_id, password):
     server.quit()
 
 def remainder_mail(Fname ,Lname, Bname, Duedate, from_id ,to_id, password):
-    message = f"""Thanks {Fname} {Lname},<br>
-        For issuing book from our library Named <b>'{Bname}'</b>.<br>
+    message = f"""Dear {Fname} {Lname},<br>
+        Thanks for issuing book Named <b>'{Bname}'</b> from our library.<br>
         The Due date for returning the book is Tomorrow i.e.<b>{Duedate}</b><br>
-        <i>\" WE DO BELIEVE SOMETHING GREAT WILL HAPPEN ,WHEN YOU READ A GOOD BOOK!!!!\" </i>"""
+        Kindly return the book by tomorrow or else Rs.5/day will be fined after the due date."""
     HTML_BODY = MIMEText(message, 'html')
 
     msg = MIMEMultipart('alternative')
