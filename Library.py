@@ -328,7 +328,7 @@ class menu:
         conn=sqlite3.connect('Library.db')
         try:
             current_date=datetime.datetime.today()
-            due_date=datetime.datetime.today() + datetime.timedelta(1)
+            due_date=datetime.datetime.today() + datetime.timedelta(7)
             conn.execute("insert into book_issued \
             values (?,?,?,?)",(bookid,Userid,current_date.strftime("%x"),due_date.strftime("%x"),))
             conn.commit()
@@ -613,23 +613,26 @@ class menu:
             goahed=False
         
         if goahed==True:
-            try:
-                if (a and b and d )=="":
-                    messagebox.showinfo("Error","Fields cannot be empty.")
-                else:
-                    cursor=conn.cursor()
-                    cursor.execute("select ID from user_info where EMAIL_ID= (?)",(d,))
-                    au=cursor.fetchall()
-                    if au!=[]: 
-                        messagebox.showinfo("Error","Mail ID already in use.")
+            if len(c)==10:
+                try:
+                    if (a and b and d )=="":
+                        messagebox.showinfo("Error","Fields cannot be empty.")
                     else:
-                        conn.execute("insert into user_info (FNAME, LNAME, PHONE, EMAIL_ID)\
-                        values (?,?,?,?)",(a.capitalize(),b.capitalize(),c,d,));
-                        conn.commit()
-                        messagebox.showinfo("Success","User added successfully")
-                    
-            except sqlite3.IntegrityError:
-                messagebox.showinfo("Error","User is already present.")
+                        cursor=conn.cursor()
+                        cursor.execute("select ID from user_info where EMAIL_ID= (?)",(d,))
+                        au=cursor.fetchall()
+                        if au!=[]: 
+                            messagebox.showinfo("Error","Mail ID already in use.")
+                        else:
+                            conn.execute("insert into user_info (FNAME, LNAME, PHONE, EMAIL_ID)\
+                            values (?,?,?,?)",(a.capitalize(),b.capitalize(),c,d,));
+                            conn.commit()
+                            messagebox.showinfo("Success","User added successfully")
+                        
+                except sqlite3.IntegrityError:
+                    messagebox.showinfo("Error","User is already present.")
+            else:
+                messagebox.showinfo("Error","More or less then 10 digits entered!")
 
         conn.close()
 
@@ -686,7 +689,7 @@ class menu:
 
     def updateuser(self,event):
         self.var_Selected = self.cm.current()
-
+        
         try:
             curItem = self.trees.focus()
             self.c1=self.trees.item(curItem,"values")[0]
@@ -694,12 +697,13 @@ class menu:
             if self.var_Selected!=2:
                 self.scop=IntVar()
                 self.nmail=StringVar()
-                self.e5.place(x=310,y=100)
                 if self.var_Selected==0:
                     self.e5=Entry(self.f1,width=20,textvariable=self.scop)
+                    self.e5.place(x=310,y=100)
                     b5=Button(self.f1,text='Update',font='Papyrus 10 bold',bg='orange',fg='black',width=9,bd=3,command=self.update_phone).place(x=500,y=97)
                 elif self.var_Selected==1:
                     self.e5=Entry(self.f1,width=20,textvariable=self.nmail)
+                    self.e5.place(x=310,y=100)
                     b6=Button(self.f1,text='Update',font='Papyrus 10 bold',bg='orange',fg='black',width=9,bd=3,command=self.update_mail).place(x=500,y=97)
             elif self.var_Selected==2:
                 self.curItem = self.trees.focus()
@@ -820,7 +824,7 @@ def automail():
     
 
     current_time=datetime.datetime.now()
-    if(current_time.strftime("%H:%M")=="20:00"):
+    if(current_time.strftime("%H:%M")=="15:12"):
         sendmail()
     root.after(60000,automail)
 #==============================METHODS========================================
