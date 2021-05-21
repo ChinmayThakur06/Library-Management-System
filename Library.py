@@ -62,6 +62,29 @@ class menu:
         self.canvas.create_image(0, 0, anchor = NW, image=photo2)
         self.canvas.image=photo2
         return self.canvas
+
+    def rm(self):
+        self.f1.destroy()
+    def mainmenu(self):
+        self.root.destroy()
+        a=menu()
+    
+    def create_tree(self,plc,lists):
+        self.tree=ttk.Treeview(plc,height=13,column=(lists),show='headings')
+        n=0
+        while n is not len(lists):
+            self.tree.heading("#"+str(n+1),text=lists[n])
+            self.tree.column(""+lists[n],width=100)
+            n=n+1
+        return self.tree
+
+
+
+
+###################################################################################################################################################################################################
+#                                            BOOK MENU SECTION                                 
+###################################################################################################################################################################################################
+
     def book(self):
         self.a.destroy()
         self.a=self.canvases(image2,0,100)
@@ -94,11 +117,6 @@ class menu:
         b1=Button(self.f1,text='Add',font='Papyrus 10 bold',fg='black',bg='orange',width=15,bd=3,command=self.addbookdata).place(x=150,y=400)
         b2=Button(self.f1,text='Back',font='Papyrus 10 bold',fg='black',bg='orange',width=15,bd=3,command=self.rm).place(x=350,y=400)
 
-    def rm(self):
-        self.f1.destroy()
-    def mainmenu(self):
-        self.root.destroy()
-        a=menu()
 
     def addbookdata(self):
         b=self.aname.get()
@@ -137,15 +155,6 @@ class menu:
         b1=Button(self.f1,text='Search',bg='orange',font='Papyrus 10 bold',width=9,bd=2,command=self.serch1).place(x=500,y=37)
         b1=Button(self.f1,text='Back',bg='orange',font='Papyrus 10 bold',width=10,bd=2,command=self.rm).place(x=250,y=450)
 
-    def create_tree(self,plc,lists):
-        self.tree=ttk.Treeview(plc,height=13,column=(lists),show='headings')
-        n=0
-        while n is not len(lists):
-            self.tree.heading("#"+str(n+1),text=lists[n])
-            self.tree.column(""+lists[n],width=100)
-            n=n+1
-        return self.tree
-
 
     def serch1(self):
         k=self.sid.get()
@@ -179,8 +188,6 @@ class menu:
                 self.cm.selection_clear()
             else:
                 messagebox.showinfo("Error","Data not found")
-
-
 
         else:
             messagebox.showinfo("Error","Search field cannot be empty.")
@@ -309,6 +316,14 @@ class menu:
             dist_genre=dist_genre+[x[0]]
             issued_times=issued_times+[x[1]]
         Library_features.make_graph(dist_genre,issued_times)
+
+
+
+
+
+###################################################################################################################################################################################################
+#                                            USER MENU SECTION                                 
+###################################################################################################################################################################################################
 
     def User(self):
         self.a.destroy()
@@ -771,6 +786,14 @@ class menu:
                 self.treess.insert('',END,values=row)
         conn.commit()
         conn.close()
+
+
+
+###################################################################################################################################################################################################
+#                                            INITIALIZING SECTION                                 
+###################################################################################################################################################################################################
+
+
 #===================START=======================
 def canvases(images,w,h):
     photo=Image.open(images)
@@ -827,7 +850,7 @@ def automail():
     if(current_time.strftime("%H:%M")=="15:12"):
         sendmail()
     root.after(60000,automail)
-#==============================METHODS========================================
+
 def Database():
     global conn, cursor
     conn = sqlite3.connect("Library.db")
